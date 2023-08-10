@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const Authenticate = require('../middleware/authenticate');
+const User = require('../model/Schema');
+const cookieParser = require('cookie-parser');
+router.use(cookieParser());
 
 //connecting database 
 require('../db/connection');
-const User = require('../model/Schema');
 
-router.get('/', (req, res) => {
-    res.send("hello from router page");
+
+router.get('/getdata', Authenticate, (req, res) => {
+    res.send(req.rootUser);
 })
 
 router.post('/register', async (req, res) => {
@@ -38,7 +41,7 @@ router.post('/signin', async (req, res) => {
         let token;
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.status(422).json({ error: "plz fill all details" });
+            return res.status(400).json({ error: "plz fill all details" });
         }
         const userExist = await User.findOne({ email: email })
         if (userExist) {
@@ -54,14 +57,32 @@ router.post('/signin', async (req, res) => {
             if (isMatch) {
                 res.status(201).json({ message: "Login sucsessfull" });
             } else {
-                res.status(400).json({ message: "invalid credentials" });
+                res.status(400).json({ error: "invalid credentials" });
             }
         } else {
-            res.status(400).json({ message: "user not found" });
+            res.status(400).json({ error: "user not found" });
         }
     } catch (err) {
         console.log(err);
     }
 });
+
+router.post('/contact', Authenticate, async (req, res) => {
+    try {
+        const { name, email, phone, message } = req.body;
+        if (!name || !email || !phone || !message) {
+            return res.status(400).json({ error: "Please fill message" });
+        }
+        const userContact = await User.findOne({ _id: req.userID });
+        if (userContact) {
+            await userContact.addMessage(name, email, phone, message);
+            await userContact.save();
+            return res.status(200).json({ message: "Message sent successfully" });
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+})
 
 module.exports = router;

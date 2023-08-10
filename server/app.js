@@ -14,12 +14,6 @@ require('./db/connection');
 //linking router
 app.use(require('./router/auth'));
 
-//creating middleware
-const middleware = (req, res, next) => {
-    console.log("this is my middleware");
-    next();
-}
-
 app.listen(PORT, (req, res) => {
     console.log(`server running at port ${PORT}`);
 })

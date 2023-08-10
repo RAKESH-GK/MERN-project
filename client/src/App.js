@@ -1,24 +1,28 @@
-import React from 'react'
+import React from 'react';
+import './App.css';
+import { Routes, Route } from "react-router-dom";
+import Navbar from './components/Navbar';
+import About from './components/About';
+import Contact from './components/Contact';
+import Login from './components/Login';
+import Home from './components/Home';
+import Signup from './components/Signup';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.min.js';
 
 function App() {
   return (
     <div>
-     <h1 style={{"fontSize":"1rem"}}>ratheesh</h1>
-     <h2>ratheesh</h2>
-     <h3>ratheesh</h3>
-     <h4>ratheesh</h4>
-     <h5>ratheesh</h5>
-     <h6>ratheesh</h6>
-     aschvauc
-     
-
-
-
-
-
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
 
     </div>
   )
 }
-
 export default App
